@@ -34,11 +34,10 @@ class Conexion{
                    ."dbname={$db}; charset={$codification}";
            // creamos la conexion
            $this->conexion = new PDO($url,$user, $password);
-          echo "CONECTADO";
-        } catch (Exception $exe) {
-            echo "No se pudo conectar";   
+           return $this->conexion;
+        } catch (Exception $exe) {  
             echo $exe->getTraceAsString();
         }
     }
-
+    
 }
