@@ -41,7 +41,56 @@ class Crud{
          }
      }
 
-     //metodo para ejecutar una sentencia
+     // metodo para actualizar la base de datos
+     public function update($obj){
+          try {
+               $campos = "";
+               foreach ($obj as $key => $value) {
+                    $campos .= "`$key`=:$key,";
+               }
+               $campos = rtrim($campos, ",");
+               $this->sql = "UPDATE {$this->tabla} SET {$campos} {$this->wheres}";
+               $consulta = $this->run($obj);
+               return $consulta;
+          } catch (Exception $exc) {
+               echo $exc->getTraceAsString();
+          }
+     }
+
+     //metodo para eliminar un registro de la base de datos
+     public function delete(){
+         try {
+              $this->sql = "DELETE FROM {$this->tabla} {$this->wheres}";
+              $consulta = $this->run();
+              return $consulta; 
+         } catch (Exception $exc) {
+              echo $exc->getTraceAsString();
+         }
+     }
+
+     //metodo para crear la sentencia where AND
+     public function where($key, $condition, $value){
+          try {
+               $this->wheres .= (strpos($this->wheres, "WHERE")) ? "AND" : "WHERE";
+               $this->wheres .= "`$key` $condition " . ((is_string($value)) ? "\"$value\"" : $value) . " ";
+               return $this;
+          } catch (Exception $exc) {
+               echo $exc->getTraceAsString();
+          }
+     }
+     
+     //metodo para crear la sentencia where OR
+     public function orWhere($key, $condition, $value){
+          try {
+               $this->wheres .= (strpos($this->wheres, "WHERE")) ? "OR" : "WHERE";
+               $this->wheres .= "`$key` $condition " . ((is_string($value)) ? "\"$value\"" : $value) . " ";
+               return $this;
+          } catch (Exception $exc) {
+               echo $exc->getTraceAsString();
+          }
+     }
+
+     //metodo para ejecutar una sentencia (clave = valor)
      private function run($obj = null){
           $consulta = $this->conexion->prepare($this->sql);
           if($obj !== null){
